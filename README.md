@@ -17,3 +17,8 @@ with some explanations and additional stuff.
 ## Changelog
 
   20150418 Creating repo and uploaded openssl example
+
+## License
+  No license as you can find some of these things out there. I've written
+  lots of things, others are based on codes I've found, and others may be
+  copied/pasted from their authors.
