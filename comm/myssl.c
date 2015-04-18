@@ -30,21 +30,30 @@
 #include <sys/select.h>
 #include <sys/time.h>
 
-#define CAPATH "/etc/ssl/certs"	/* Where to look for the Certificate Authorities */
-#define BUFFERSIZE 16384	/* 16Kb SSL_read block size */
-#define STRBUFFERSIZE 256	/* For temporary strings */
+/** Where to look for the Certificate Authorities */
+#define CAPATH "/etc/ssl/certs"	
+/** 16Kb SSL_read block size */
+#define BUFFERSIZE 16384
+/** For temporary strings */
+#define STRBUFFERSIZE 256
+/** User agent string  */
 #define USERAGENT "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:37.0) Gecko/20100101 Firefox/37.0"
+/** CRLF  */
 #define CRLF "\r\n"
 
 /* Useful Structure. Just to have everything in one place and avoid
  passing lot of arguments to the functions. */
 
-/* sslc handles SSL and SSL_CTX and socket */
+/** sslc handles SSL and SSL_CTX and socket */
 typedef struct
 {
+  /** socket handler  */
   int skt;
+  /** error, if any  */
   int err;
+  /** SSL handler  */
   SSL* ssl;
+  /** SSL Context  */
   SSL_CTX* ctx;
 } Sslc;
 
@@ -52,9 +61,10 @@ typedef struct
 
 /**
  * Transforms ASN1 time sring to time_t (except milliseconds and time zone)
+ * Ideas from: http://stackoverflow.com/questions/10975542/asn1-time-conversion
  *
- * @param ASN1_TIME* time    SSL ASN1_TIME pointer
- * @param time_t*    tmt     time_t pointer to write to
+ * @param time    SSL ASN1_TIME pointer
+ * @param tmt     time_t pointer to write to
  *
  * @return int 0 if OK, <0 if anything goes wrong
  */
@@ -65,11 +75,11 @@ int ASN1_TIME_to_time_t(ASN1_TIME* time, time_t *tmt);
  * value to call in chain. Used by ASN1_TIME_to_time_t to extract
  * substrings easyly
  *
- * @param char*      buffer  Where to write to
- * @param char*      origin  Original string
- * @param size_t*    from    Where to start from. 
+ * @param buffer  Where to write to
+ * @param origin  Original string
+ * @param from    Where to start from. 
  *                           Updated to the last position after end.
- * @param size_t     size    Characters to extract.
+ * @param size    Characters to extract.
  *
  * @return char* reference to buffer
  */
@@ -78,22 +88,22 @@ char* join(char* buffer, const char* origin, size_t *from, size_t size);
 /**
  * Check certificate validity
  *
- * @param X509*      certificate Certificate to check
+ * @param       certificate Certificate to check
  *
- * @return long int  error code (0 is OK. See x509_vfy.h for 
- *                   constants (X509_V_ERR_UNABLE_*). You can also
- *                   use X509_verify_cert_error_string(long int) to
- *                   see the error string
+ * @return      error code (0 is OK. See x509_vfy.h for 
+ *              constants (X509_V_ERR_UNABLE_*). You can also
+ *              use X509_verify_cert_error_string(long int) to
+ *              see the error string
  */
-long int check_cert_validity(X509* certificate);
+long int check_certificate_validity(X509* certificate);
 
 /**
  * Creates a basic TCP client connection to a server on a port.
  * Uses simple sockets
  *
- * @param Sslc*      h       Our structure. Only the socket will be used
- * @param char*      server  Where to connect
- * @param int        port    The port to use (443 for HTTPS)
+ * @param h       Our structure. Only the socket will be used
+ * @param server  Where to connect
+ * @param port    The port to use (443 for HTTPS)
  *
  * @return int       (0 if OK, else fail)
  */
@@ -102,19 +112,19 @@ int TCP_Connection(Sslc* h, char* server, int port);
 /**
  * Uses select to test if there is anything waiting to be read.
  *
- * @param Sslc*      h       Our structure. Only the socket will be used
- * @param double     timeout Timeout before giving up
+ * @param h       Our structure. Only the socket will be used
+ * @param timeout Timeout before giving up
  *
- * @return int       (0 timeout, 1 data waiting, <0 fail)
+ * @return (0 timeout, 1 data waiting, <0 fail)
  */
 int TCP_select(Sslc* h, double timeout);
 
 /**
  * SSL initialization and handshake
  *
- * @param Sslc*      h       Our structure. 
+ * @param h       Our structure. 
  *
- * @return int       (0 if OK, else fail)
+ * @return (0 if OK, else fail)
  */
 int SSL_Connection(Sslc* h);
 
@@ -123,10 +133,10 @@ int SSL_Connection(Sslc* h);
  * the socket and decode information, or even perform a handshake 
  * if needed.
  *
- * @param Sslc*      h       Our structure. 
- * @param char*      msg     Message to send
+ * @param h       Our structure. 
+ * @param msg     Message to send
 
- * @return int       (0 if OK, else fail)
+ * @return (0 if OK, else fail)
  */
 int SSL_send(Sslc* h, char* msg);
 
@@ -134,11 +144,11 @@ int SSL_send(Sslc* h, char* msg);
  * SSL recv. To be called instead of recs. It will read the socket
  * and decode information, or even perform a handshake if needed
  *
- * @param Sslc*      h       Our structure. 
- * @param char**     data    Data to be read (caution a pointer by
+ * @param h       Our structure. 
+ * @param data    Data to be read (caution a pointer by
  *                           reference that must be freed manually
 
- * @return int       (0 if OK, else fail)
+ * @return (0 if OK, else fail)
  */
 int SSL_recv(Sslc* h, char** data);
 
@@ -146,7 +156,7 @@ int SSL_recv(Sslc* h, char** data);
  * Prints out SSL information: SSL Version, cipher used and certificate
  * information.
  *
- * @param Sslc*      h       Our structure. 
+ * @param h       Our structure. 
  *
  * @return void
  */
@@ -156,7 +166,7 @@ void SSL_print_info(Sslc* h);
  * Prints out certificate information. Run throught the entries, print the
  * not before and not after information and verify the certificate.
  *
- * @param X509*      cert       The certificate to check
+ * @param cert       The certificate to check
  *
  * @return void
  */
@@ -166,30 +176,30 @@ void SSL_print_certificate_info(X509* cert);
  * Gets cipher description in a string
  * Please free the resulting string, don't do it like me ;)
  *
- * @param SSL_CIPHER*     cipher       Cipher
+ * @param cipher       Cipher
  *
- * @return char*    String with the description
+ * @return String with the description
  */
 char *SSL_cipher_description(SSL_CIPHER* cipher);
 
 /**
  * Gets a string with the time_t into a string
  *
- * @param char*     buffer      Buffer to write to
- * @param size_t    bufsize     Total buffer size
- * @param char*     format      Date/Time format (@see strftime())
- * @param time_t*   tim         Time
+ * @param buffer      Buffer to write to
+ * @param bufsize     Total buffer size
+ * @param format      Date/Time format (@see strftime())
+ * @param tim         Time
  *
- * @return char*    buffer
+ * @return buffer
  */
 char *time_t_to_str(char *buffer, size_t bufsize, const char* format, time_t *tim);
 
 /**
  * Prints ASN1_TIME on screen
  *
- * @param ASN1_TIME*     asn1time     Time to write
- * @param char*          pre_string   String to write before the date
- * @param char*          dateformat   Date format (@see strftime())
+ * @param asn1time     Time to write
+ * @param pre_string   String to write before the date
+ * @param dateformat   Date format (@see strftime())
  *
  * @return void
  */
@@ -199,7 +209,7 @@ void print_time(ASN1_TIME* asn1time, char* pre_string, char* dateformat);
 /**
  * Prints program usage
  *
- * @param char*          executable   Program executable (argv[0])
+ * @param executable   Program executable (argv[0])
  *
  * @return void
  */
@@ -208,7 +218,7 @@ void print_usage(char* executable);
 /**
  * Prints a tragic error and exit
  *
- * @param char*          msg   Error text
+ * @param msg   Error text
  *
  * @return void
  */
