@@ -7,6 +7,12 @@ Some of this codes may be found in
   
 with some explanations and additional stuff.
 
+## What you can find here
+  comm/             Communications stuff
+    |
+    -- myssl.c      Simple openssl client and show certificate
+                    and cipher information.
+
 ## Changelog
 
-20150418 Creating repo
+  20150418 Creating repo and uploaded openssl example
