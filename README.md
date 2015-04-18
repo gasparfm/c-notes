@@ -8,11 +8,17 @@ Some of this codes may be found in
 with some explanations and additional stuff.
 
 ## What you can find here
-  comm/             Communications stuff
-    |
-    -- myssl.c      Simple openssl client and show certificate
-                    and cipher information.
-
+```
+  + comm/               Communications stuff
+      |
+      + -- myssl.c      Simple openssl client and show certificate
+                        and cipher information.
+```
 ## Changelog
 
   20150418 Creating repo and uploaded openssl example
+
+## License
+  No license as you can find some of these things out there. I've written
+  lots of things, others are based on codes I've found, and others may be
+  copied/pasted from their authors.
