@@ -5,5 +5,6 @@
 
   Compilation:
     $ gcc -o myssl myssql.c -lcrypto -lssl
+
   Usage
     $ ./myssl github.com [port]
