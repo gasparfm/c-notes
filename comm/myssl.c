@@ -278,11 +278,11 @@ char* join(char* buffer, const char* origin, size_t *from, size_t size)
 
 int ASN1_TIME_to_time_t(ASN1_TIME* time, time_t *tmt)
 {
-  const char* data = time->data;
+  const char* data = (char*)time->data;
   size_t p = 0;
   char buf[5];
   struct tm t;
-  int temp;
+
   memset(&t, 0, sizeof(t));
   size_t datalen = strlen(data);
 
@@ -519,7 +519,7 @@ void SSL_print_certificate_info(X509* cert)
   X509_NAME_ENTRY* entry;
   char *s;
   char buffer[STRBUFFERSIZE];
-  int i, n;
+  int i;
 
   certname = X509_get_subject_name(cert);
   for (i=0; i< X509_NAME_entry_count(certname); i++)
