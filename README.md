@@ -13,6 +13,10 @@ with some explanations and additional stuff.
       |
       + -- myssl.c      Simple openssl client and show certificate
                         and cipher information.
+      + -- serverssl.c  Simple openssl server
+  + misc/		Things I don't know where to put on
+      |
+      + -- zstrings.c   How to compress and uncompres strings with Zlib
 ```
 ## Changelog
 
